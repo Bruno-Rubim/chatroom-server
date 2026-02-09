@@ -1,10 +1,15 @@
 import express from "express";
 
+type playerState = {
+  pos: { x: number; y: number };
+  facing: "left" | "right";
+};
+
 type User = {
   id: number;
-  pos: { x: number; y: number };
   logged: boolean;
   lastPing: number;
+  playerState: playerState;
 };
 
 let userList: User[] = [];
@@ -71,16 +76,18 @@ apiHandler.put("/playerUpdate", (req, res) => {
   }
   switch (update.dir) {
     case "left":
-      user.pos.x -= 32;
+      user.playerState.pos.x -= 32;
+      user.playerState.facing = update.dir;
       break;
     case "right":
-      user.pos.x += 32;
+      user.playerState.pos.x += 32;
+      user.playerState.facing = update.dir;
       break;
     case "down":
-      user.pos.y += 16;
+      user.playerState.pos.y += 16;
       break;
     case "up":
-      user.pos.y -= 16;
+      user.playerState.pos.y -= 16;
       break;
   }
   if (update.type) user.lastPing = Date.now();
